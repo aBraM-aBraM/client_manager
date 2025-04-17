@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'models/client.dart';
 import 'package:intl/intl.dart';
+import 'pages/add_client_page.dart';
 
 void main() {
   runApp(const MyApp());
@@ -85,6 +86,19 @@ class _MyHomePageState extends State<MyHomePage> {
             ),
           );
         },
+      ),
+      floatingActionButton: FloatingActionButton(onPressed: () async {
+        final newClient = await Navigator.push<Client>(
+          context,
+          MaterialPageRoute(builder: (_) => const AddClientPage()),
+          );
+        if (newClient != null) {
+          setState(() {
+            clients.add(newClient);
+          });
+        }
+      },
+      child: const Icon(Icons.add),
       ),
     );
   }
