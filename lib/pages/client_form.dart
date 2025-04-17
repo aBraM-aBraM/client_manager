@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import '../models/client.dart';
+import '../widgets/treatment_tag_selector.dart';
 
 class ClientForm extends StatefulWidget {
   final Client? initialClient;
@@ -23,7 +24,7 @@ class ClientForm extends StatefulWidget {
 class _ClientFormState extends State<ClientForm> {
   final _formKey = GlobalKey<FormState>();
   late TextEditingController nameController;
-  late TextEditingController treatmentController;
+  late List<String> _selectedTreatments;
   DateTime? lastVisit;
   DateTime? nextAppointment;
 
@@ -32,7 +33,7 @@ class _ClientFormState extends State<ClientForm> {
     super.initState();
     final client = widget.initialClient;
     nameController = TextEditingController(text: client?.name ?? '');
-    treatmentController = TextEditingController(text: client?.treatment ?? '');
+    _selectedTreatments = client?.treatment ?? [];
     lastVisit = client?.lastVisit;
     nextAppointment = client?.nextAppointment;
   }
@@ -63,7 +64,7 @@ class _ClientFormState extends State<ClientForm> {
     if (_formKey.currentState!.validate() && lastVisit != null) {
       final newClient = Client(
         name: nameController.text,
-        treatment: treatmentController.text,
+        treatment: _selectedTreatments,
         lastVisit: lastVisit!,
         nextAppointment: nextAppointment,
       );
@@ -82,10 +83,19 @@ class _ClientFormState extends State<ClientForm> {
             decoration: const InputDecoration(labelText: 'Name'),
             validator: (val) => val!.isEmpty ? 'Enter name' : null,
           ),
-          TextFormField(
-            controller: treatmentController,
-            decoration: const InputDecoration(labelText: 'Treatment'),
-            validator: (val) => val!.isEmpty ? 'Enter treatment' : null,
+          const SizedBox(height: 16),
+          const Text(
+            'Treatments:',
+            style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+          ),
+          const SizedBox(height: 8),
+          TreatmentTagSelector(
+            selectedTreatments: _selectedTreatments,
+            onChanged: (updatedList) {
+              setState(() {
+                _selectedTreatments = updatedList;
+              });
+            },
           ),
           const SizedBox(height: 20),
           ListTile(

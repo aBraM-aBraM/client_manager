@@ -3,6 +3,7 @@ import 'models/client.dart';
 import 'package:intl/intl.dart';
 import 'pages/add_client_page.dart';
 import 'pages/edit_client_page.dart';
+import 'consts.dart';
 
 void main() {
   runApp(const MyApp());
@@ -37,18 +38,18 @@ class _MyHomePageState extends State<MyHomePage> {
   List<Client> clients = [
     Client(
       name: 'Alice',
-      treatment: 'Hair Coloring',
+      treatment: [availableTreatments[0], availableTreatments[1]],
       lastVisit: DateTime(2025, 4, 1),
       nextAppointment: DateTime(2025, 5, 1),
     ),
     Client(
       name: 'Bob',
-      treatment: 'Haircut',
+      treatment: [availableTreatments.last],
       lastVisit: DateTime(2025, 3, 20),
     ),
     Client(
       name: 'Charlie',
-      treatment: 'Beard Trim',
+      treatment: availableTreatments,
       lastVisit: DateTime(2025, 4, 10),
       nextAppointment: DateTime(2025, 4, 25),
     ),
@@ -71,39 +72,61 @@ class _MyHomePageState extends State<MyHomePage> {
           return Card(
             margin: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
             child: ListTile(
-              title: Text(client.name),
-              subtitle: Text(
-                '${client.treatment} • Last visit: ${formatDate(client.lastVisit)}',
-              ),
-              trailing: client.nextAppointment != null
-                  ? Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        const Icon(Icons.calendar_today, size: 18),
-                        Text(formatDate(client.nextAppointment!)),
-                      ],
-                    )
-                  : const Text('No next appt.'),
-              onTap: () async {
-                final result = await Navigator.push<ClientAction>(
-                  context,
-                  MaterialPageRoute(
-                    builder: (_) => EditClientPage(client: client),
-                    ),
-                  );
-                
-                if (result is ClientEdited) {
-                  setState(() {
-                    clients[index] = result.updatedClient;
-
-                  });
-                } else if (result is ClientDeleted) {
-                  setState(() {
-                    clients.removeAt(index);
-                  });
-                }
-              },
+  title: Text(client.name),
+  subtitle: Column(
+    crossAxisAlignment: CrossAxisAlignment.start,
+    children: [
+      Wrap(
+        spacing: 6,
+        runSpacing: -8,
+        children: client.treatment.map((t) {
+          return Chip(
+            label: Text(t),
+            backgroundColor: Colors.purple.shade50,
+            labelStyle: const TextStyle(fontSize: 12),
+            visualDensity: VisualDensity.compact,
+          );
+        }).toList(),
+      ),
+      const SizedBox(height: 4),
+      Text(
+        'Last visit: ${formatDate(client.lastVisit)}',
+        style: TextStyle(color: Colors.grey.shade600, fontSize: 12),
+      ),
+    ],
+  ),
+  trailing: client.nextAppointment != null
+      ? Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            const Icon(Icons.calendar_today, size: 18),
+            Text(
+              formatDate(client.nextAppointment!),
+              style: const TextStyle(fontSize: 12),
             ),
+          ],
+        )
+      : const Text('No next appt.'),
+  onTap: () async {
+    final result = await Navigator.push<ClientAction>(
+      context,
+      MaterialPageRoute(
+        builder: (_) => EditClientPage(client: client),
+      ),
+    );
+
+    if (result is ClientEdited) {
+      setState(() {
+        clients[index] = result.updatedClient;
+      });
+    } else if (result is ClientDeleted) {
+      setState(() {
+        clients.removeAt(index);
+      });
+    }
+  },
+)
+,
           );
         },
       ),

@@ -1,6 +1,6 @@
 class Client {
   final String name;
-  final String treatment;
+  final List<String> treatment;
   final DateTime lastVisit;
   final DateTime? nextAppointment;
 
