@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'models/client.dart';
 import 'package:intl/intl.dart';
 import 'pages/add_client_page.dart';
+import 'pages/edit_client_page.dart';
 
 void main() {
   runApp(const MyApp());
@@ -83,6 +84,25 @@ class _MyHomePageState extends State<MyHomePage> {
                       ],
                     )
                   : const Text('No next appt.'),
+              onTap: () async {
+                final result = await Navigator.push<ClientAction>(
+                  context,
+                  MaterialPageRoute(
+                    builder: (_) => EditClientPage(client: client),
+                    ),
+                  );
+                
+                if (result is ClientEdited) {
+                  setState(() {
+                    clients[index] = result.updatedClient;
+
+                  });
+                } else if (result is ClientDeleted) {
+                  setState(() {
+                    clients.removeAt(index);
+                  });
+                }
+              },
             ),
           );
         },
