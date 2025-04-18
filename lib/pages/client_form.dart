@@ -26,8 +26,10 @@ class _ClientFormState extends State<ClientForm> {
   final _formKey = GlobalKey<FormState>();
   late TextEditingController nameController;
   late List<String> _selectedTreatments;
-  DateTime? lastVisit;
+  DateTime? lastAppointment;
   DateTime? nextAppointment;
+
+  final Duration appointmentDelta = const Duration(days: 30);
 
   @override
   void initState() {
@@ -35,11 +37,11 @@ class _ClientFormState extends State<ClientForm> {
     final client = widget.initialClient;
     nameController = TextEditingController(text: client?.name ?? '');
     _selectedTreatments = client?.treatment ?? [];
-    lastVisit = client?.lastVisit;
-    nextAppointment = client?.nextAppointment;
+    lastAppointment = client?.lastAppointment ?? DateTime.now();
+    nextAppointment = client?.nextAppointment ?? DateTime.now().add(appointmentDelta) ;
   }
 
-  Future<void> _pickDate(bool isLastVisit) async {
+  Future<void> _pickLastAppointment() async {
     final picked = await showDatePicker(
       context: context,
       initialDate: DateTime.now(),
@@ -48,11 +50,20 @@ class _ClientFormState extends State<ClientForm> {
     );
     if (picked != null) {
       setState(() {
-        if (isLastVisit) {
-          lastVisit = picked;
-        } else {
-          nextAppointment = picked;
-        }
+        lastAppointment = picked;
+      });
+    }
+  }
+  Future<void> _pickNextAppointment() async {
+    final picked = await showDatePicker(
+      context: context,
+      initialDate: DateTime.now().add(appointmentDelta),
+      firstDate: DateTime(2020),
+      lastDate: DateTime(2035),
+    );
+    if (picked != null) {
+      setState(() {
+        nextAppointment = picked;
       });
     }
   }
@@ -62,11 +73,11 @@ class _ClientFormState extends State<ClientForm> {
   }
 
   void _submit() {
-    if (_formKey.currentState!.validate() && lastVisit != null) {
+    if (_formKey.currentState!.validate() && lastAppointment != null) {
       final newClient = Client(
         name: nameController.text,
         treatment: _selectedTreatments,
-        lastVisit: lastVisit!,
+        lastAppointment: lastAppointment!,
         nextAppointment: nextAppointment,
       );
       widget.onSubmit(newClient);
@@ -102,21 +113,21 @@ class _ClientFormState extends State<ClientForm> {
           const SizedBox(height: 20),
           ListTile(
             title: Text(
-              lastVisit == null
+              lastAppointment == null
                   ? l10n.pickLastAppointment 
-                  : '${l10n.lastVisit}: ${formatDate(lastVisit)}',
+                  : '${l10n.lastAppointment}: ${formatDate(lastAppointment)}',
             ),
             trailing: const Icon(Icons.date_range),
-            onTap: () => _pickDate(true),
+            onTap: () => _pickLastAppointment(),
           ),
           ListTile(
             title: Text(
               nextAppointment == null
                   ? l10n.pickNextAppointment 
-                  : '${l10n.nextVisit}: ${formatDate(nextAppointment)}',
+                  : '${l10n.nextAppointment}: ${formatDate(nextAppointment)}',
             ),
             trailing: const Icon(Icons.event),
-            onTap: () => _pickDate(false),
+            onTap: () => _pickNextAppointment(),
           ),
           const SizedBox(height: 24),
           ElevatedButton(

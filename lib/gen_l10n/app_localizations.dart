@@ -131,17 +131,17 @@ abstract class AppLocalizations {
   /// **'Hair Product'**
   String get treatmentProduct;
 
-  /// No description provided for @lastVisit.
+  /// No description provided for @lastAppointment.
   ///
   /// In en, this message translates to:
-  /// **'Last visit'**
-  String get lastVisit;
+  /// **'Last Appointment'**
+  String get lastAppointment;
 
-  /// No description provided for @nextVisit.
+  /// No description provided for @nextAppointment.
   ///
   /// In en, this message translates to:
-  /// **'Next visit'**
-  String get nextVisit;
+  /// **'Next Appointment'**
+  String get nextAppointment;
 
   /// No description provided for @noNextAppointment.
   ///
@@ -184,6 +184,24 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Enter Name'**
   String get nameValidator;
+
+  /// No description provided for @chooseFromContacts.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose from Contacts'**
+  String get chooseFromContacts;
+
+  /// No description provided for @createNewClient.
+  ///
+  /// In en, this message translates to:
+  /// **'Create New Client'**
+  String get createNewClient;
+
+  /// No description provided for @expectedIncomeTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Expected Income'**
+  String get expectedIncomeTitle;
 }
 
 class _AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> {

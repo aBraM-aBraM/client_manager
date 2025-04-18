@@ -18,7 +18,7 @@ class MyApp extends StatefulWidget {
 }
 
 class MyAppState extends State<MyApp> {
-  Locale _locale = const Locale('en');
+  Locale _locale = const Locale('he');
 
   void _changeLocale(Locale locale) {
     setState(() {
@@ -37,7 +37,9 @@ class MyAppState extends State<MyApp> {
         GlobalWidgetsLocalizations.delegate,
         GlobalCupertinoLocalizations.delegate,
       ],
-      theme: ThemeData(primarySwatch: Colors.pink),
+      theme: ThemeData(
+        primarySwatch: Colors.pink,
+        fontFamily: "OpenSans"),
       home: MyHomePage(key: ValueKey(_locale), onLocaleChange: _changeLocale),
     );
   }
@@ -55,6 +57,8 @@ class MyHomePage extends StatefulWidget {
 class _MyHomePageState extends State<MyHomePage> {
   late List<Client> clients = [];
 
+
+
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
@@ -62,6 +66,7 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   void _initializeClients() {
+    if (clients.isNotEmpty) return; // Don't overwrite existing clients
     final l10n = AppLocalizations.of(context)!;
     final treatments = [
       l10n.treatmentColoring,
@@ -73,18 +78,18 @@ class _MyHomePageState extends State<MyHomePage> {
       Client(
         name: 'Alice',
         treatment: [treatments[0], treatments[1]],
-        lastVisit: DateTime(2025, 4, 1),
+        lastAppointment: DateTime(2025, 4, 1),
         nextAppointment: DateTime(2025, 5, 1),
       ),
       Client(
         name: 'Bob',
         treatment: [treatments.last],
-        lastVisit: DateTime(2025, 3, 20),
+        lastAppointment: DateTime(2025, 3, 20),
       ),
       Client(
         name: 'Charlie',
         treatment: treatments,
-        lastVisit: DateTime(2025, 4, 10),
+        lastAppointment: DateTime(2025, 4, 10),
         nextAppointment: DateTime(2025, 4, 25),
       ),
     ];
@@ -117,91 +122,190 @@ class _MyHomePageState extends State<MyHomePage> {
     }
   }
 
-  Future<void> _navigateToAddPage() async {
-    final newClient = await Navigator.push<Client>(
-      context,
-      MaterialPageRoute(builder: (_) => const AddClientPage()),
-    );
 
-    if (newClient != null) {
-      setState(() {
-        clients.add(newClient);
-      });
-    }
-  }
-
-  PreferredSizeWidget _buildAppBar(AppLocalizations l10n) {
-    return AppBar(
-      title: Text(l10n.appTitle),
-      actions: [
-        IconButton(
-          icon: const Icon(Icons.language),
-          onPressed: _toggleLanguage,
-        ),
-      ],
-    );
-  }
-
-  Widget _buildClientCard(Client client, int index, AppLocalizations l10n) {
-    return Card(
-      margin: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-      child: ListTile(
-        title: Text(client.name),
-        subtitle: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Wrap(
-              spacing: 6,
-              runSpacing: -8,
-              children: client.treatment.map((t) {
-                return Chip(
-                  label: Text(t),
-                  backgroundColor: Colors.purple.shade50,
-                  labelStyle: const TextStyle(fontSize: 12),
-                  visualDensity: VisualDensity.compact,
-                );
-              }).toList(),
-            ),
-            const SizedBox(height: 4),
-            Text(
-              '${l10n.lastVisit}: ${_formatDate(client.lastVisit)}',
-              style: TextStyle(color: Colors.grey.shade600, fontSize: 12),
-            ),
-          ],
-        ),
-        trailing: client.nextAppointment != null
-            ? Column(
-                mainAxisAlignment: MainAxisAlignment.center,
+ Widget _buildClientCard(Client client, int index, AppLocalizations l10n) {
+  return InkWell(
+    onTap: () => _navigateToEditPage(client, index),
+    child: Column(
+      children: [
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              // Client info column
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      client.name,
+                      style: const TextStyle(
+                        fontSize: 20,
+                        fontWeight: FontWeight.w600,
+                        color: Colors.black,
+                      ),
+                    ),
+                    const SizedBox(height: 4),
+                    Wrap(
+                      spacing: 6,
+                      runSpacing: -8,
+                      children: client.treatment.map((t) {
+                        return Chip(
+                          label: Text(t),
+                          backgroundColor: Colors.purple.shade50,
+                          labelStyle: const TextStyle(fontSize: 12),
+                          visualDensity: VisualDensity.compact,
+                          materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                          padding: EdgeInsets.zero,
+                        );
+                      }).toList(),
+                    ),
+                  ],
+                ),
+              ),
+              // Next appointment
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.end,
                 children: [
-                  const Icon(Icons.calendar_today, size: 18),
+                  const Icon(Icons.calendar_today, size: 18, color: Colors.black87),
+                  const SizedBox(height: 4),
                   Text(
-                    _formatDate(client.nextAppointment!),
-                    style: const TextStyle(fontSize: 12),
+                    client.nextAppointment != null
+                        ? _formatDate(client.nextAppointment!)
+                        : l10n.noNextAppointment,
+                    style: const TextStyle(fontSize: 12, color: Colors.grey),
                   ),
                 ],
-              )
-            : Text(l10n.noNextAppointment),
-        onTap: () => _navigateToEditPage(client, index),
+              ),
+            ],
+          ),
+        ),
+        const Divider(
+          height: 1,
+          thickness: 1,
+          indent: 16,
+          endIndent: 16,
+          color: Color(0xFFE0E0E0),
+        ),
+      ],
+    ),
+  );
+}
+
+
+
+  void _showAddClientOptions() {
+    showModalBottomSheet(
+      context: context,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
       ),
+      builder: (context) {
+        final l10n = AppLocalizations.of(context)!;
+        return SafeArea(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              ListTile(
+                leading: const Icon(Icons.person_add),
+                title: Text(l10n.createNewClient),
+                onTap: () async {
+                  Navigator.pop(context);
+                  final newClient = await Navigator.push<Client>(
+                    context,
+                    MaterialPageRoute(builder: (_) => const AddClientPage()),
+                  );
+                  if (newClient != null) {
+                    setState(() {
+                      clients.add(newClient);
+                    });
+                  }
+                },
+              ),
+              ListTile(
+                leading: const Icon(Icons.contacts),
+                title: Text(l10n.chooseFromContacts),
+                onTap: () {
+                  Navigator.pop(context);
+                  _handlePickFromContacts(); // placeholder
+                },
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
+  void _handlePickFromContacts() {
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(content: Text('Contact picker coming soon...')),
     );
   }
 
-  @override
-  Widget build(BuildContext context) {
-    final l10n = AppLocalizations.of(context)!;
+ @override
+Widget build(BuildContext context) {
+  final l10n = AppLocalizations.of(context)!;
 
-    return Scaffold(
-      appBar: _buildAppBar(l10n),
-      body: clients.isEmpty
-          ? const Center(child: CircularProgressIndicator())
-          : ListView.builder(
-              itemCount: clients.length,
-              itemBuilder: (context, index) => _buildClientCard(clients[index], index, l10n),
-            ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: _navigateToAddPage,
-        child: const Icon(Icons.add),
-      ),
-    );
-  }
+  return Scaffold(
+    body: Stack(
+      children: [
+        // Top half with centered title + subtitle
+        Container(
+          height: MediaQuery.of(context).size.height / 2,
+          color: const Color.fromRGBO(10, 51, 44, 1),
+          padding: const EdgeInsets.all(32),
+          alignment: Alignment.center,
+          child: Column(
+            mainAxisSize: MainAxisSize.max,
+            children: [
+              const SizedBox(height: 25),
+              Text(
+                l10n.expectedIncomeTitle,
+                style: const TextStyle(
+                  color: Colors.white,
+                   fontSize: 32,
+                   fontWeight: FontWeight.w300),
+              ),
+              const SizedBox(height: 2),
+              Text(
+                "17,342₪",
+                style: const TextStyle(
+                  color: Colors.white,
+                   fontSize: 48,
+                   fontWeight: FontWeight.bold),
+              ),
+            ],
+          ),
+        ),
+
+        // Persistent draggable bottom sheet
+        DraggableScrollableSheet(
+          initialChildSize: 0.6,
+          minChildSize: 0.6,
+          maxChildSize: 0.95,
+          builder: (context, scrollController) {
+            return Container(
+              decoration: const BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.vertical(top: Radius.circular(32)),
+              ),
+              child: ListView.builder(
+                controller: scrollController,
+                itemCount: clients.length,
+                itemBuilder: (context, index) =>
+                    _buildClientCard(clients[index], index, l10n),
+              ),
+            );
+          },
+        ),
+      ],
+    ),
+    floatingActionButton: FloatingActionButton(
+      onPressed: _showAddClientOptions,
+      child: const Icon(Icons.add),
+    ),
+  );
+}
+
 }

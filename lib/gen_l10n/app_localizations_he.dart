@@ -27,10 +27,10 @@ class AppLocalizationsHe extends AppLocalizations {
   String get treatmentProduct => 'מוצר שיער';
 
   @override
-  String get lastVisit => 'ביקור אחרון';
+  String get lastAppointment => 'ביקור אחרון';
 
   @override
-  String get nextVisit => 'ביקור הבא';
+  String get nextAppointment => 'ביקור הבא';
 
   @override
   String get noNextAppointment => 'אין תור הבא';
@@ -52,4 +52,13 @@ class AppLocalizationsHe extends AppLocalizations {
 
   @override
   String get nameValidator => 'הכנס שם';
+
+  @override
+  String get chooseFromContacts => 'בחר מאנשי קשר';
+
+  @override
+  String get createNewClient => 'צור לקוח חדש';
+
+  @override
+  String get expectedIncomeTitle => 'הכנסות צפויות';
 }

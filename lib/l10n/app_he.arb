@@ -6,13 +6,16 @@
   "treatmentHaircut": "תספורת",
   "treatmentColoring": "צביעת שיער",
   "treatmentProduct": "מוצר שיער",
-  "lastVisit": "ביקור אחרון",
-  "nextVisit": "ביקור הבא",
+  "lastAppointment": "ביקור אחרון",
+  "nextAppointment": "ביקור הבא",
   "noNextAppointment": "אין תור הבא",
   "pickLastAppointment": "בחר את התור הקודם",
   "pickNextAppointment": "בחר את התור הבא",
   "save": "שמור",
   "delete": "מחק",
   "nameTitle": "שם",
-  "nameValidator": "הכנס שם"
+  "nameValidator": "הכנס שם",
+  "chooseFromContacts": "בחר מאנשי קשר",
+  "createNewClient": "צור לקוח חדש",
+  "expectedIncomeTitle": "הכנסות צפויות"
 }

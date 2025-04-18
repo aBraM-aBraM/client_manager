@@ -6,13 +6,16 @@
   "treatmentHaircut": "Haircut",
   "treatmentColoring": "Hair Coloring",
   "treatmentProduct": "Hair Product",
-  "lastVisit": "Last visit",
-  "nextVisit": "Next visit",
+  "lastAppointment": "Last Appointment",
+  "nextAppointment": "Next Appointment",
   "noNextAppointment": "No next appointment",
   "pickLastAppointment": "Pick Last Appointment",
   "pickNextAppointment": "Pick Next Appointment",
   "save": "Save",
   "delete": "Delete",
   "nameTitle": "Name",
-  "nameValidator": "Enter Name"
+  "nameValidator": "Enter Name",
+  "chooseFromContacts": "Choose from Contacts",
+  "createNewClient": "Create New Client",
+  "expectedIncomeTitle": "Expected Income"
 }
