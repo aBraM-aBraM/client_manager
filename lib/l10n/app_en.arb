@@ -1,0 +1,18 @@
+{
+  "@@locale": "en",
+  "appTitle": "Hair Salon",
+  "addClient": "Add Client",
+  "treatmentsTitle": "Treatments",
+  "treatmentHaircut": "Haircut",
+  "treatmentColoring": "Hair Coloring",
+  "treatmentProduct": "Hair Product",
+  "lastVisit": "Last visit",
+  "nextVisit": "Next visit",
+  "noNextAppointment": "No next appointment",
+  "pickLastAppointment": "Pick Last Appointment",
+  "pickNextAppointment": "Pick Next Appointment",
+  "save": "Save",
+  "delete": "Delete",
+  "nameTitle": "Name",
+  "nameValidator": "Enter Name"
+}

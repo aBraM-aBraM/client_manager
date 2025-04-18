@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../consts.dart';
+import '../gen_l10n/app_localizations.dart';
 
 class TreatmentTagSelector extends StatelessWidget {
   final List<String> selectedTreatments;
@@ -13,7 +13,9 @@ class TreatmentTagSelector extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final allTreatments = Set<String>.from(availableTreatments);
+
+    final AppLocalizations l10n = AppLocalizations.of(context)!;
+    final allTreatments = {l10n.treatmentColoring, l10n.treatmentHaircut, l10n.treatmentProduct};
     final selectedSet = Set<String>.from(selectedTreatments);
 
     final unselected = allTreatments.difference(selectedSet).toList();

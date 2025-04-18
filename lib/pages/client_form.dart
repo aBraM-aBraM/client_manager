@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import '../gen_l10n/app_localizations.dart';
 import '../models/client.dart';
 import '../widgets/treatment_tag_selector.dart';
 
@@ -74,18 +75,19 @@ class _ClientFormState extends State<ClientForm> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     return Form(
       key: _formKey,
       child: ListView(
         children: [
           TextFormField(
             controller: nameController,
-            decoration: const InputDecoration(labelText: 'Name'),
-            validator: (val) => val!.isEmpty ? 'Enter name' : null,
+            decoration: InputDecoration(labelText: l10n.nameTitle),
+            validator: (val) => val!.isEmpty ? l10n.nameValidator : null,
           ),
           const SizedBox(height: 16),
-          const Text(
-            'Treatments:',
+          Text(
+            l10n.treatmentsTitle,
             style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
           ),
           const SizedBox(height: 8),
@@ -101,8 +103,8 @@ class _ClientFormState extends State<ClientForm> {
           ListTile(
             title: Text(
               lastVisit == null
-                  ? 'Pick Last Visit Date'
-                  : 'Last Visit: ${formatDate(lastVisit)}',
+                  ? l10n.pickLastAppointment 
+                  : '${l10n.lastVisit}: ${formatDate(lastVisit)}',
             ),
             trailing: const Icon(Icons.date_range),
             onTap: () => _pickDate(true),
@@ -110,8 +112,8 @@ class _ClientFormState extends State<ClientForm> {
           ListTile(
             title: Text(
               nextAppointment == null
-                  ? 'Pick Next Appointment (optional)'
-                  : 'Next Appt: ${formatDate(nextAppointment)}',
+                  ? l10n.pickNextAppointment 
+                  : '${l10n.nextVisit}: ${formatDate(nextAppointment)}',
             ),
             trailing: const Icon(Icons.event),
             onTap: () => _pickDate(false),
@@ -119,14 +121,14 @@ class _ClientFormState extends State<ClientForm> {
           const SizedBox(height: 24),
           ElevatedButton(
             onPressed: _submit,
-            child: const Text('Save'),
+            child: Text(l10n.save)
           ),
           if (widget.showDelete && widget.onDelete != null) ...[
             const SizedBox(height: 16),
             TextButton.icon(
               onPressed: widget.onDelete,
               icon: const Icon(Icons.delete, color: Colors.red),
-              label: const Text('Delete', style: TextStyle(color: Colors.red)),
+              label: Text(l10n.delete, style: TextStyle(color: Colors.red)),
             ),
           ]
         ],

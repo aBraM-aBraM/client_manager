@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../gen_l10n/app_localizations.dart';
 import './client_form.dart';
 
 class AddClientPage extends StatelessWidget {
@@ -6,8 +7,9 @@ class AddClientPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final AppLocalizations l10n = AppLocalizations.of(context)!;
     return Scaffold(
-      appBar: AppBar(title: const Text('Add Client')),
+      appBar: AppBar(title: Text(l10n.addClient)),
       body: Padding(
         padding: const EdgeInsets.all(16),
         child: ClientForm(
